@@ -19,21 +19,21 @@ import org.unidal.lookup.configuration.Component;
 
 public class ComponentsConfigurator extends AbstractResourceConfigurator {
 
-	public static void main(String[] args) {
-		generatePlexusComponentsXmlFile(new ComponentsConfigurator());
-	}
+  public static void main(String[] args) {
+    generatePlexusComponentsXmlFile(new ComponentsConfigurator());
+  }
 
-	@Override
-	public List<Component> defineComponents() {
-		List<Component> all = new ArrayList<Component>();
+  @Override
+  public List<Component> defineComponents() {
+    List<Component> all = new ArrayList<Component>();
 
-		all.add(C(ClientConfigManager.class, DefaultClientConfigManager.class));
-		all.add(C(MessageIdFactory.class));
+    all.add(C(ClientConfigManager.class, DefaultClientConfigManager.class));
+    all.add(C(MessageIdFactory.class));
 
-		all.add(C(MessageManager.class, DefaultMessageManager.class) //
-				.req(ClientConfigManager.class, TransportManager.class, MessageIdFactory.class));
-		all.add(C(MessageProducer.class, DefaultMessageProducer.class) //
-				.req(MessageManager.class, MessageIdFactory.class));
+    all.add(C(MessageManager.class, DefaultMessageManager.class) //
+        .req(ClientConfigManager.class, TransportManager.class, MessageIdFactory.class));
+    all.add(C(MessageProducer.class, DefaultMessageProducer.class) //
+        .req(MessageManager.class, MessageIdFactory.class));
 
 //		all.add(C(TcpSocketSender.class) //
 //		      .req(TcpSocketSender.class, MessageIdFactory.class) //
@@ -42,18 +42,18 @@ public class ComponentsConfigurator extends AbstractResourceConfigurator {
 //		all.add(C(TransportManager.class, DefaultTransportManager.class) //
 //		      .req(ClientConfigManager.class, TcpSocketSender.class));
 
-		all.add(C(LocalLogSender.class));
-		all.add(C(TransportManager.class, LogTransportManager.class)
-				.req(ClientConfigManager.class, LocalLogSender.class));
+    all.add(C(LocalLogSender.class));
+    all.add(C(TransportManager.class, LogTransportManager.class)
+        .req(LocalLogSender.class));
 
 //		all.add(C(MessageStatistics.class, DefaultMessageStatistics.class));
 //		all.add(C(StatusUpdateTask.class) //
 //				.req(MessageStatistics.class, ClientConfigManager.class));
 
-		all.add(C(Module.class, CatClientModule.ID, CatClientModule.class));
+    all.add(C(Module.class, CatClientModule.ID, CatClientModule.class));
 
-		all.addAll(new CodecComponentConfigurator().defineComponents());
+    all.addAll(new CodecComponentConfigurator().defineComponents());
 
-		return all;
-	}
+    return all;
+  }
 }
