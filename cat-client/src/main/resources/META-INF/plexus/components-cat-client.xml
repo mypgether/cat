@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- THIS FILE WAS AUTO GENERATED FROM class com.dianping.cat.build.ComponentsConfigurator, DO NOT EDIT IT -->
 <plexus>
 	<components>
 		<component>
@@ -37,51 +38,18 @@
 			</requirements>
 		</component>
 		<component>
-			<role>com.dianping.cat.message.io.TcpSocketSender</role>
-			<implementation>com.dianping.cat.message.io.TcpSocketSender</implementation>
-			<requirements>
-				<requirement>
-					<role>com.dianping.cat.configuration.ClientConfigManager</role>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.message.internal.MessageIdFactory</role>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.message.spi.MessageStatistics</role>
-					<field-name>m_statistics</field-name>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.message.spi.MessageCodec</role>
-					<role-hint>plain-text</role-hint>
-					<field-name>m_codec</field-name>
-				</requirement>
-			</requirements>
+			<role>com.dianping.cat.message.io.LocalLogSender</role>
+			<implementation>com.dianping.cat.message.io.LocalLogSender</implementation>
 		</component>
 		<component>
 			<role>com.dianping.cat.message.io.TransportManager</role>
-			<implementation>com.dianping.cat.message.io.DefaultTransportManager</implementation>
+			<implementation>com.dianping.cat.message.io.LogTransportManager</implementation>
 			<requirements>
 				<requirement>
 					<role>com.dianping.cat.configuration.ClientConfigManager</role>
 				</requirement>
 				<requirement>
-					<role>com.dianping.cat.message.io.TcpSocketSender</role>
-				</requirement>
-			</requirements>
-		</component>
-		<component>
-			<role>com.dianping.cat.message.spi.MessageStatistics</role>
-			<implementation>com.dianping.cat.message.spi.internal.DefaultMessageStatistics</implementation>
-		</component>
-		<component>
-			<role>com.dianping.cat.status.StatusUpdateTask</role>
-			<implementation>com.dianping.cat.status.StatusUpdateTask</implementation>
-			<requirements>
-				<requirement>
-					<role>com.dianping.cat.message.spi.MessageStatistics</role>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.configuration.ClientConfigManager</role>
+					<role>com.dianping.cat.message.io.LocalLogSender</role>
 				</requirement>
 			</requirements>
 		</component>

@@ -20,11 +20,7 @@ import com.dianping.cat.configuration.client.entity.Server;
 import com.dianping.cat.configuration.client.transform.DefaultSaxParser;
 
 public class DefaultClientConfigManager implements LogEnabled, ClientConfigManager, Initializable {
-	private static final String CAT_CLIENT_XML = "/META-INF/cat/client.xml";
-
 	private static final String PROPERTIES_CLIENT_XML = "/META-INF/app.properties";
-	
-	private static final String XML = "/data/appdatas/cat/client.xml";
 
 	private Logger m_logger;
 
@@ -75,7 +71,7 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 					httpPort = 8080;
 				}
 				return String.format("http://%s:%d/cat/s/router?domain=%s&ip=%s&op=json", server.getIp().trim(), httpPort,
-				      getDomain().getId(), NetworkInterfaceManager.INSTANCE.getLocalHostAddress());
+						getDomain().getId(), NetworkInterfaceManager.INSTANCE.getLocalHostAddress());
 			}
 		}
 		return null;
@@ -125,34 +121,6 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 		return null;
 	}
 
-	private ClientConfig loadConfigFromXml() {
-		InputStream in = null;
-		try {
-			in = Thread.currentThread().getContextClassLoader().getResourceAsStream(CAT_CLIENT_XML);
-
-			if (in == null) {
-				in = Cat.class.getResourceAsStream(CAT_CLIENT_XML);
-			}
-			if (in != null) {
-				String xml = Files.forIO().readFrom(in, "utf-8");
-
-				m_logger.info(String.format("Resource file(%s) found.", Cat.class.getResource(CAT_CLIENT_XML)));
-				return DefaultSaxParser.parse(xml);
-			}
-			return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (Exception e) {
-				}
-			}
-		}
-		return null;
-	}
-
 	private String loadProjectName() {
 		String appName = null;
 		InputStream in = null;
@@ -192,34 +160,22 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 
 	@Override
 	public void initialize() throws InitializationException {
-		File configFile = new File(XML);
-		
-		initialize(configFile);
+		initialize(null);
 	}
 
 	@Override
-   public void initialize(File configFile) throws InitializationException {
+	public void initialize(File configFile) throws InitializationException {
 		try {
-			ClientConfig globalConfig = null;
+			ClientConfig globalConfig = new ClientConfig();
+			globalConfig.setMode("client");
+			globalConfig.setEnabled(true);
+			Server server = new Server("127.0.0.1");
+			globalConfig.addServer(server);
+
 			ClientConfig clientConfig = null;
-
-			if (configFile != null) {
-				if (configFile.exists()) {
-					String xml = Files.forIO().readFrom(configFile.getCanonicalFile(), "utf-8");
-
-					globalConfig = DefaultSaxParser.parse(xml);
-					m_logger.info(String.format("Global config file(%s) found.", configFile));
-				} else {
-					m_logger.warn(String.format("Global config file(%s) not found, IGNORED.", configFile));
-				}
-			}
 
 			// load the client configure from Java class-path
 			clientConfig = loadConfigFromEnviroment();
-
-			if (clientConfig == null) {
-				clientConfig = loadConfigFromXml();
-			}
 			// merge the two configures together to make it effected
 			if (globalConfig != null && clientConfig != null) {
 				globalConfig.accept(new ClientConfigMerger(clientConfig));
@@ -233,5 +189,5 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 		} catch (Exception e) {
 			throw new InitializationException(e.getMessage(), e);
 		}
-   }
+	}
 }
